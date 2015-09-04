@@ -2,6 +2,10 @@
 date_default_timezone_set('America/New_York');
 include 'simple-html-dom.php';
 
+/**
+ * Fetch index page HTML and parse it for the date, title, and id information which gets inserted into the database.
+ * @return JSON An array of article IDs to be stored by the JavaScript that requested it
+ */
 function fetch_index() {
 	global $db;
 
@@ -32,6 +36,10 @@ function fetch_index() {
 	send_json_fail( $db->error() );
 }
 
+/**
+ * Fetch National news index page HTML and parse it for the article IDs that are considered national news.
+ * @return JSON An array of article IDs considered to be National News stories
+ */
 function fetch_national_index() {
 	global $db;
 
@@ -46,6 +54,10 @@ function fetch_national_index() {
 	send_json_success( $national_ids );
 }
 
+/**
+ * Fetch Global news index page HTML and parse it for the article IDs that are considered Global news.
+ * @return JSON An array of article IDs considered to be Global News stories
+ */
 function fetch_global_index() {
 	global $db;
 
@@ -60,6 +72,10 @@ function fetch_global_index() {
 	send_json_success( $global_ids );
 }
 
+/**
+ * Fetches and process an individual article page. Pulls out the main content and the resources information to be inserted in the database. Information about whether the article is national news and/or global news gets passed in via $_GET parameters.
+ * @return JSON List of rows in the database that were updated
+ */
 function fetch_article() {
 	global $db;
 
@@ -102,6 +118,11 @@ function fetch_article() {
 
 }
 
+/**
+ * Takes a URL, appends the value of offset to the end of it, and fetches the URL via PHP Simple DOM library.
+ * @param  String $url The URL to fetch
+ * @return PHP Simple DOM Object
+ */
 function fetch_index_html( $url ) {
 	$offset = intval( $_GET['offset'] );
 	$url = $url . $offset;
@@ -109,7 +130,13 @@ function fetch_index_html( $url ) {
 	return file_get_html( $url );
 }
 
+/**
+ * Parses a string to extract the date.
+ * @param  String $str A string that contains the date as extracted from an index page.
+ * @return String      A formatted date string
+ */
 function get_the_date( $str ) {
+	// Example of $str: 7/31/2015 - Mexican Court Sentences Five Men to 697 Years on Prison for Femicide
 	$pieces = explode(' - ', $str);
 	$date_string = trim( $pieces[0] );
 	$the_date = date( 'Y-m-d H:i:s', strtotime( $date_string ) );
@@ -117,9 +144,15 @@ function get_the_date( $str ) {
 	return $the_date;
 }
 
+/**
+ * Extract the ID of an article from a given URL.
+ * @param  String $url URL of individual article page
+ * @return Int   the ID
+ */
 function get_the_id_from_url( $url ) {
+	// Example of $url: http://feminist.org/news/newsbyte/uswirestory.asp?id=15610
 	$pieces = explode( 'id=', $url );
-	$pieces2 = explode( '&', $pieces[1] );
+	$pieces2 = explode( '&', $pieces[1] ); // Just in case there are extra parameters in the URL.
 
 	return intval( $pieces2[0] );
 }
