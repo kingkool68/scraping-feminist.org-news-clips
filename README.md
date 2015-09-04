@@ -1,5 +1,7 @@
 # Scraping Feminist.org News Bytes
 
+**[Download the database dump (5.2MB)](http://kingkool68.com/feministdev_9-4-15-1-24 AM.sql.bz2)**
+
 This repo contains PHP code for scraping [http://feminist.org/news/newsbyte/uswire.asp]() and storing it in a MySQL database.
 
 See `db-config-sample.php` for instructions on setting up your database to store all the data that is scraped.
